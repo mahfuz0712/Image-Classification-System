@@ -1,0 +1,9 @@
+tensorflow
+numpy
+pillow
+scikit-learn
+matplotlib
+shap
+lime
+opencv-python
+
