@@ -55,10 +55,14 @@ def augment_images(fileName, input_dir, output_dir, validation_dir, target_size=
 
 
 # Paths to the input, output and validation directories
-input_dir = "../datasets/test_data/class_1"
-output_dir = "../datasets/augmented_data/class_1"
-validation_dir = "../datasets/validation/class_1"
+input_dir1 = "../datasets/test_data/class_1"
+output_dir1 = "../datasets/augmented_data/class_1"
+validation_dir1 = "../datasets/validation/class_1"
+input_dir2 = "../datasets/test_data/class_2"
+output_dir2 = "../datasets/augmented_data/class_2"
+validation_dir2 = "../datasets/validation/class_2"
 
 # Run the augmentation
-augment_images("sick_child", input_dir, output_dir, validation_dir, target_size=(200, 200), num_augmented_images=2000)
+augment_images("sick_child", input_dir1, output_dir1, validation_dir1, target_size=(200, 200), num_augmented_images=2000)
+augment_images("sick_child", input_dir2, output_dir2, validation_dir2, target_size=(200, 200), num_augmented_images=2000)
 print("run train.py")

@@ -63,7 +63,7 @@ history = model.fit(
     steps_per_epoch=train_generator.samples // batch_size,
     validation_data=val_generator,
     validation_steps=val_generator.samples // batch_size,
-    epochs=10,
+    epochs=100,
     callbacks=[ early_stop]
 )
 
