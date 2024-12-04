@@ -6,32 +6,23 @@ image_classification_system/
 │
 ├── datasets/
 │   ├── test_data/
-│   │   ├── sick/
+│   │   ├── class_1/
 │   │   │   ├── sick_child1.jpg
 │   │   │   ├── sick_child2.jpg
 │   │   │   └── ...
-│   │   └── healthy/
-│   │       ├── healthy_child1.jpg
-│   │       ├── healthy_child2.jpg
-│   │       └── ...
+│   │   └── class_2/
 │   ├── augmented_data/
-│   │   ├── sick/
+│   │   ├── class_1/
 │   │   │   ├── sick_child1.jpg
 │   │   │   ├── sick_child2.jpg
 │   │   │   └── ...
-│   │   └── healthy/
-│   │       ├── healthy_child1.jpg
-│   │       ├── healthy_child2.jpg
-│   │       └── ...
+│   │   └── class_2/
 │   ├── validation/
-│       ├── sick/
+│       ├── class_1/
 │       │   ├── sick_child1.jpg
 │       │   ├── sick_child2.jpg
 │       │   └── ...
-│       |── healthy/
-|       |   ├── healthy_child1.jpg
-│       |   ├── healthy_child2.jpg
-│       |   └── ...
+│       |── class_2/
 │
 ├── models/
 │   └── best.model.h5 // this will be generated after you run train.py
@@ -83,13 +74,6 @@ python evaluate.py
 ```
 This script will load the trained model and make classification repornt on the on the images present at the validation path.
 
-#### Step-6" AI Explainabilty
-##### 1. Run the xai.py script to see the report
-
-```
-python xai.py
-```
-This script will load the trained model and make AI Explainabilty report on the on the images present
 ## Author
 [Mohammad Mahfuz Rahman](https://github.com/mahfuz0712)
 
