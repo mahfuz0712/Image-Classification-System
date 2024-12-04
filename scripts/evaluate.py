@@ -1,7 +1,7 @@
 import os
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 import numpy as np
-from sklearn.metrics import classification_report, roc_auc_score, precision_recall_curve, auc
+from sklearn.metrics import classification_report, roc_auc_score, precision_recall_curve, auc # type: ignore
 from tensorflow.keras.models import load_model # type: ignore
 from tensorflow.keras.preprocessing.image import ImageDataGenerator # type: ignore
 

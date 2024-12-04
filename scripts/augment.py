@@ -60,4 +60,5 @@ output_dir = "../datasets/augmented_data/class_1"
 validation_dir = "../datasets/validation/class_1"
 
 # Run the augmentation
-augment_images(input_dir, output_dir, validation_dir, target_size=(200, 200), num_augmented_images=2000)
+augment_images("sick_child", input_dir, output_dir, validation_dir, target_size=(200, 200), num_augmented_images=2000)
+print("run train.py")
