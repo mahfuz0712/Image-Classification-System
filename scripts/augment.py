@@ -1,68 +1,86 @@
-import os
-import shutil
+import os  # Importing the os module for directory and environment variable management
+import shutil  # Importing shutil for file operations like copying files
+
+# Setting TensorFlow environment variable to disable oneDNN optimizations
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array # type: ignore
+
+# Importing necessary functions for image processing and augmentation from TensorFlow Keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array  # type: ignore
+
+# Defining a function to augment images
 def augment_images(fileName, input_dir, output_dir, validation_dir, target_size=(200, 200), num_augmented_images=2000):
-    # Ensure the output directory exists
+    # Ensure the output directory exists; create it if it doesn't
     os.makedirs(output_dir, exist_ok=True)
-    # Data augmentation parameters
+    
+    # Define data augmentation parameters using ImageDataGenerator
     datagen = ImageDataGenerator(
-        rotation_range=40,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        fill_mode='reflect'
+        rotation_range=40,  # Randomly rotate images by up to 40 degrees
+        shear_range=0.2,  # Randomly apply shearing transformations
+        zoom_range=0.2,  # Randomly zoom into images
+        horizontal_flip=True,  # Randomly flip images horizontally
+        width_shift_range=0.2,  # Randomly shift images horizontally
+        height_shift_range=0.2,  # Randomly shift images vertically
+        fill_mode='reflect'  # Fill missing pixels using reflection
     )
 
-    # Load all images from the input directory
+    # Get a list of image files in the input directory with specific extensions
     image_files = [f for f in os.listdir(input_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
-    total_images = len(image_files)
+    total_images = len(image_files)  # Count the total number of images found
 
+    # Print the total number of images found and the target number of augmented images
     print(f"Found {total_images} images in {input_dir}. Augmenting to {num_augmented_images} total images...")
 
-    # Calculate how many augmented images to generate per original image
+    # Calculate how many augmented images should be generated per original image
     images_per_original = num_augmented_images // total_images
-    count = 0  # Counter for generated images
+    count = 0  # Initialize a counter for the total number of augmented images generated
 
     for img_file in image_files:
-        # Load the image
+        # Construct the full path to the image
         img_path = os.path.join(input_dir, img_file)
+        # Load the image with the specified target size
         img = load_img(img_path, target_size=target_size)
+        # Convert the image to a NumPy array
         img_array = img_to_array(img)
-        img_array = img_array.reshape((1,) + img_array.shape)  # Add batch dimension
+        # Reshape the image array to add a batch dimension
+        img_array = img_array.reshape((1,) + img_array.shape)
 
-        # Generate augmented images
+        # Generate augmented images in batches
         for batch in datagen.flow(img_array, batch_size=1, save_to_dir=output_dir, save_prefix=fileName, save_format='jpg'):
-            count += 1
+            count += 1  # Increment the counter
+            # Stop generating images once the target number is reached
             if count >= num_augmented_images:
-                print("Augmentation complete.")
+                print("Augmentation complete.")  # Notify when augmentation is complete
                 return
+            # Break after generating the desired number of images per original image
             if count % images_per_original == 0:
                 break
 
+    # Print the total number of images augmented
     print(f"Augmented {count} images and saved to {output_dir}.")
-    print("copying augmented data to validation directory...")
-    # copy augmented data to validation directory
+    print("copying augmented data to validation directory...")  # Notify about validation data copying
+
+    # Copy augmented data to the validation directory
     for file_name in os.listdir(output_dir):
+        # Construct the source and destination file paths
         source_file = os.path.join(output_dir, file_name)
         destination_file = os.path.join(validation_dir, file_name)
-        # Copy only if it's a file
+        # Copy the file only if it exists and is not a directory
         if os.path.isfile(source_file):
-            shutil.copy(source_file, destination_file)
-            print(f"Copied: {file_name}")
+            shutil.copy(source_file, destination_file)  # Copy the file
+            print(f"Copied: {file_name}")  # Print the name of the copied file
 
+# Paths to the input, output, and validation directories for class 1 and class 2
+input_dir1 = "../datasets/test_data/class_1"  # Input directory for class 1
+input_dir2 = "../datasets/test_data/class_1"  # Input directory for class 2
+output_dir1 = "../datasets/augmented_data/class_1"  # Output directory for augmented images of class 1
+output_dir2 = "../datasets/augmented_data/class_2"  # Output directory for augmented images of class 2
+validation_dir1 = "../datasets/validation/class_1"  # Validation directory for class 1
+validation_dir2 = "../datasets/validation/class_2"  # Validation directory for class 2
 
-# Paths to the input, output and validation directories
-input_dir1 = "../datasets/test_data/class_1"
-input_dir2 = "../datasets/test_data/class_1"
-output_dir1 = "../datasets/augmented_data/class_1"
-output_dir2 = "../datasets/augmented_data/class_2"
-validation_dir1 = "../datasets/validation/class_1"
-validation_dir2 = "../datasets/validation/class_2"
-
-# Run the augmentation
+# Run the augmentation for class 1
 augment_images("sick_child", input_dir1, output_dir1, validation_dir1, target_size=(200, 200), num_augmented_images=2000)
+# Run the augmentation for class 2
 augment_images("sick_child", input_dir2, output_dir2, validation_dir2, target_size=(200, 200), num_augmented_images=2000)
+
+# Notify that the augmentation process is complete and prompt to run the training script
 print("run train.py")
