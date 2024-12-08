@@ -7,7 +7,7 @@ import tensorflow as tf  # Importing TensorFlow for deep learning tasks
 # Importing necessary classes and functions from TensorFlow Keras for building and training models
 from tensorflow.keras.models import Sequential  # type: ignore # To define a sequential model
 from tensorflow.keras import layers, models  # type: ignore # For layers and model building
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout  # type: ignore # Layers for CNN architecture
+from tensorflow.keras.layers import Conv2D, Input, MaxPooling2D, Flatten, Dense, Dropout  # type: ignore # Layers for CNN architecture
 from tensorflow.keras.preprocessing.image import ImageDataGenerator  # type: ignore # For image preprocessing and augmentation
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping  # type: ignore # For saving the model and stopping training early
 
@@ -45,7 +45,8 @@ val_generator = val_datagen.flow_from_directory(
 
 # Defining the Convolutional Neural Network (CNN) model
 model = models.Sequential([  # Creating a sequential model
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(200, 200, 3)),  # 1st convolutional layer with 32 filters
+    layers.Input(shape=(200, 200, 3)),  # Define input shape explicitly
+    layers.Conv2D(32, (3, 3), activation='relu'),  # 1st convolutional layer with 32 filters
     layers.MaxPooling2D(2, 2),  # 1st max pooling layer to reduce spatial dimensions
     layers.Conv2D(64, (3, 3), activation='relu'),  # 2nd convolutional layer with 64 filters
     layers.MaxPooling2D(2, 2),  # 2nd max pooling layer
