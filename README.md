@@ -6,31 +6,32 @@ image_classification_system/
 │
 ├── datasets/
 │   ├── test_data/
-│   │   ├── class_1/
+│   │   ├── congenital_disorder/
 │   │   │   ├── sick_child1.jpg
 │   │   │   ├── sick_child2.jpg
 │   │   │   └── ...
-│   │   └── class_2/
+│   │   └── congenital_disorder_part_two/
 │   ├── augmented_data/
-│   │   ├── class_1/
+│   │   ├── congenital_disorder_part_one/
 │   │   │   ├── sick_child1.jpg
 │   │   │   ├── sick_child2.jpg
 │   │   │   └── ...
-│   │   └── class_2/
+│   │   └── congenital_disorder_part_two/
 │   ├── validation/
-│       ├── class_1/
+│       ├── congenital_disorder_part_one/
 │       │   ├── sick_child1.jpg
 │       │   ├── sick_child2.jpg
 │       │   └── ...
-│       |── class_2/
+│       |── congenital_disorder_part_two/
 │
 ├── models/
 │   └── best.model.h5 // this will be generated after you run train.py
 │
 ├── scripts/
 │   ├── augment.py
+|   |── evaluate.py
+│   ├── summary.py
 │   ├── train.py
-│   ├── evaluate.py
 │   └── xai.py
 │
 ├── requirements.txt
@@ -73,6 +74,13 @@ This script will train the model using the augmented_data and validation data an
 python evaluate.py
 ```
 This script will load the trained model and make classification repornt on the on the images present at the validation path.
+
+#### Step-6: Run Explainable Ai Program
+##### 1. Run the xai.py script
+```
+python xai.py
+```
+
 
 ## Author
 [Mohammad Mahfuz Rahman](https://github.com/mahfuz0712)

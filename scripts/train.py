@@ -5,12 +5,27 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 import tensorflow as tf  # Importing TensorFlow for deep learning tasks
 # Importing necessary classes and functions from TensorFlow Keras for building and training models
-from tensorflow.keras.models import Sequential  # type: ignore # To define a sequential model
-from tensorflow.keras import layers, models  # type: ignore # For layers and model building
-from tensorflow.keras.layers import Conv2D, Input, MaxPooling2D, Flatten, Dense, Dropout  # type: ignore # Layers for CNN architecture
 from tensorflow.keras.preprocessing.image import ImageDataGenerator  # type: ignore # For image preprocessing and augmentation
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping  # type: ignore # For saving the model and stopping training early
+from tensorflow.keras import  models  # type: ignore # For layers and model building
+from tensorflow.keras.layers import Conv2D, Input, MaxPooling2D, Flatten, Dense, Dropout  # type: ignore # Layers for CNN architecture
+from tensorflow.keras.callbacks import  EarlyStopping  # type: ignore # For saving the model and stopping training early
+from keras.callbacks import Callback # type: ignore
+            
+class AccuracyRangeCheckpoint(Callback):
+    def __init__(self, filepath, min_acc, max_acc):
+        super(AccuracyRangeCheckpoint, self).__init__()
+        self.filepath = filepath
+        self.min_acc = min_acc
+        self.max_acc = max_acc
 
+    def on_epoch_end(self, epoch, logs=None):
+        accuracy = logs.get('val_accuracy')
+        if accuracy is not None:
+            if self.min_acc < accuracy < self.max_acc:
+                # Save the model if within range
+                self.model.save(self.filepath)
+                print(f"\nModel saved at epoch {epoch + 1} with val_accuracy: {accuracy:.4f}")
+                
 # Paths
 base_dir = '../datasets'  # Base directory containing dataset folders
 train_dir = os.path.join(base_dir, 'augmented_data')  # Path to the training dataset directory
@@ -19,9 +34,8 @@ validation_dir = os.path.join(base_dir, 'validation')  # Path to the validation 
 # Image dimensions and parameters
 img_width, img_height = 200, 200  # Dimensions to which input images will be resized
 batch_size = 32  # Number of images processed in a batch
-num_classes = 2  # Number of output classes (update if more classes are added)
 
-# Data generators for loading and preprocessing images
+
 # Training data generator with image rescaling to normalize pixel values between 0 and 1
 train_datagen = ImageDataGenerator(rescale=1.0/255.0)
 # Validation data generator with the same rescaling
@@ -45,16 +59,16 @@ val_generator = val_datagen.flow_from_directory(
 
 # Defining the Convolutional Neural Network (CNN) model
 model = models.Sequential([  # Creating a sequential model
-    layers.Input(shape=(200, 200, 3)),  # Define input shape explicitly
-    layers.Conv2D(32, (3, 3), activation='relu'),  # 1st convolutional layer with 32 filters
-    layers.MaxPooling2D(2, 2),  # 1st max pooling layer to reduce spatial dimensions
-    layers.Conv2D(64, (3, 3), activation='relu'),  # 2nd convolutional layer with 64 filters
-    layers.MaxPooling2D(2, 2),  # 2nd max pooling layer
-    layers.Conv2D(128, (3, 3), activation='relu'),  # 3rd convolutional layer with 128 filters
-    layers.MaxPooling2D(2, 2),  # 3rd max pooling layer
-    layers.Flatten(),  # Flatten the feature maps into a 1D vector for the dense layers
-    layers.Dense(512, activation='relu'),  # Fully connected dense layer with 512 neurons
-    layers.Dense(1, activation='sigmoid')  # Output layer with 1 neuron and sigmoid activation for binary classification
+    Input(shape=(200, 200, 3)),  # Define input shape explicitly
+    Conv2D(32, (3, 3), activation='relu'),  # 1st convolutional layer with 32 filters
+    MaxPooling2D(2, 2),  # 1st max pooling layer to reduce spatial dimensions
+    Conv2D(64, (3, 3), activation='relu'),  # 2nd convolutional layer with 64 filters
+    MaxPooling2D(2, 2),  # 2nd max pooling layer
+    Conv2D(128, (3, 3), activation='relu'),  # 3rd convolutional layer with 128 filters
+    MaxPooling2D(2, 2),  # 3rd max pooling layer
+    Flatten(),  # Flatten the feature maps into a 1D vector for the dense layers
+    Dense(512, activation='relu'),  # Fully connected dense layer with 512 neurons
+    Dense(1, activation='sigmoid')  # Output layer with 1 neuron and sigmoid activation for binary classification
 ])
 
 # Compiling the model with loss function, optimizer, and evaluation metrics
@@ -66,7 +80,17 @@ model.compile(
 
 # Setting up callbacks
 # Early stopping callback to stop training if validation loss doesn't improve for 5 epochs
-early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+early_stop = EarlyStopping(
+    monitor='val_accuracy', 
+    patience=5, 
+    restore_best_weights=True,
+    verbose=1,
+)
+
+callbacks = [
+    early_stop,
+    AccuracyRangeCheckpoint('../models/best.model.h5', min_acc=0.9600, max_acc=0.9800),
+]
 
 # Training the model using the training and validation generators
 history = model.fit(
@@ -74,10 +98,10 @@ history = model.fit(
     steps_per_epoch=train_generator.samples // batch_size,  # Number of steps per epoch
     validation_data=val_generator,  # Validation data generator
     validation_steps=val_generator.samples // batch_size,  # Number of validation steps per epoch
-    epochs=10,  # Maximum number of epochs for training
-    callbacks=[early_stop]  # List of callbacks; early stopping in this case
+    epochs=20,  # Maximum number of epochs for training
+    callbacks=callbacks # List of callbacks; early stopping in this case
 )
 
 # Save the final model to the specified path
-model.save('../models/best.model.h5')  # Save the best model as an HDF5 file
+model.save('../models/best.model.h5')  # Save the best model as an keras file
 print("Training complete. Best model saved as 'best.model.h5' in models directory. Run evaluate.py to see the classification report")  # Print completion message

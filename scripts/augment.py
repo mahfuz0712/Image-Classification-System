@@ -54,33 +54,31 @@ def augment_images(fileName, input_dir, output_dir, validation_dir, target_size=
             # Break after generating the desired number of images per original image
             if count % images_per_original == 0:
                 break
+        # Generate augmented images in batches
+        for batch in datagen.flow(img_array, batch_size=1, save_to_dir=validation_dir, save_prefix=fileName, save_format='jpg'):
+            count += 1  # Increment the counter
+            # Stop generating images once the target number is reached
+            if count >= num_augmented_images:
+                print("Augmentation complete.")  # Notify when augmentation is complete
+                return
+            # Break after generating the desired number of images per original image
+            if count % images_per_original == 0:
+                break
 
     # Print the total number of images augmented
-    print(f"Augmented {count} images and saved to {output_dir}.")
-    print("copying augmented data to validation directory...")  # Notify about validation data copying
-
-    # Copy augmented data to the validation directory
-    for file_name in os.listdir(output_dir):
-        # Construct the source and destination file paths
-        source_file = os.path.join(output_dir, file_name)
-        destination_file = os.path.join(validation_dir, file_name)
-        # Copy the file only if it exists and is not a directory
-        if os.path.isfile(source_file):
-            shutil.copy(source_file, destination_file)  # Copy the file
-            print(f"Copied: {file_name}")  # Print the name of the copied file
+    print(f"Augmented {count} images and saved to {output_dir}. & {validation_dir}")
 
 # Paths to the input, output, and validation directories for class 1 and class 2
-input_dir1 = "../datasets/test_data/class_1"  # Input directory for class 1
-input_dir2 = "../datasets/test_data/class_1"  # Input directory for class 2
-output_dir1 = "../datasets/augmented_data/class_1"  # Output directory for augmented images of class 1
-output_dir2 = "../datasets/augmented_data/class_2"  # Output directory for augmented images of class 2
-validation_dir1 = "../datasets/validation/class_1"  # Validation directory for class 1
-validation_dir2 = "../datasets/validation/class_2"  # Validation directory for class 2
+input_dir = "../datasets/test_data/congenital_disorder"  # Input directory for class 1
+output_dir1 = "../datasets/augmented_data/congenital_disorder_part_one"  # Output directory for augmented images of class 1
+output_dir2 = "../datasets/augmented_data/congenital_disorder_part_two"  # Output directory for augmented images of class 2
+validation_dir1 = "../datasets/validation/congenital_disorder_part_one"  # Validation directory for class 1
+validation_dir2 = "../datasets/validation/congenital_disorder_part_two"  # Validation directory for class 2
 
 # Run the augmentation for class 1
-augment_images("sick_child", input_dir1, output_dir1, validation_dir1, target_size=(200, 200), num_augmented_images=2000)
+augment_images("sick_child", input_dir, output_dir1, validation_dir1, target_size=(200, 200), num_augmented_images=2000)
 # Run the augmentation for class 2
-augment_images("sick_child", input_dir2, output_dir2, validation_dir2, target_size=(200, 200), num_augmented_images=2000)
+augment_images("sick_child", input_dir, output_dir2, validation_dir2, target_size=(200, 200), num_augmented_images=2000)
 
 # Notify that the augmentation process is complete and prompt to run the training script
 print("run train.py")
