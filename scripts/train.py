@@ -103,5 +103,5 @@ history = model.fit(
 )
 
 # Save the final model to the specified path
-model.save('../models/best.model.h5')  # Save the best model as an keras file
-print("Training complete. Best model saved as 'best.model.h5' in models directory. Run evaluate.py to see the classification report")  # Print completion message
+model.save('../models/best.model.h5')  # Save the best model as an h5 file
+print("Training complete. Best model saved as 'best.model.h5' in models directory.\nRun evaluate.py to see the classification report")  # Print completion message

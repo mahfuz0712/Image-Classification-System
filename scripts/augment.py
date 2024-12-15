@@ -69,16 +69,17 @@ def augment_images(fileName, input_dir, output_dir, validation_dir, target_size=
     print(f"Augmented {count} images and saved to {output_dir}. & {validation_dir}")
 
 # Paths to the input, output, and validation directories for class 1 and class 2
-input_dir = "../datasets/test_data/congenital_disorder"  # Input directory for class 1
-output_dir1 = "../datasets/augmented_data/congenital_disorder_part_one"  # Output directory for augmented images of class 1
-output_dir2 = "../datasets/augmented_data/congenital_disorder_part_two"  # Output directory for augmented images of class 2
-validation_dir1 = "../datasets/validation/congenital_disorder_part_one"  # Validation directory for class 1
-validation_dir2 = "../datasets/validation/congenital_disorder_part_two"  # Validation directory for class 2
+input_dir1 = "../datasets/test_data/congenital_disorder"  # Input directory for class 1
+input_dir2 = "../datasets/test_data/healthy"  # Input directory for class 2
+output_dir1 = "../datasets/augmented_data/congenital_disorder"  # Output directory for augmented images of class 1
+output_dir2 = "../datasets/augmented_data/healthy"  # Output directory for augmented images of class 2
+validation_dir1 = "../datasets/validation/congenital_disorder"  # Validation directory for class 1
+validation_dir2 = "../datasets/validation/healthy"  # Validation directory for class 2
 
 # Run the augmentation for class 1
-augment_images("sick_child", input_dir, output_dir1, validation_dir1, target_size=(200, 200), num_augmented_images=2000)
+augment_images("sick_child", input_dir1, output_dir1, validation_dir1, target_size=(200, 200), num_augmented_images=2000)
 # Run the augmentation for class 2
-augment_images("sick_child", input_dir, output_dir2, validation_dir2, target_size=(200, 200), num_augmented_images=2000)
+augment_images("sick_child", input_dir2, output_dir2, validation_dir2, target_size=(200, 200), num_augmented_images=2000)
 
 # Notify that the augmentation process is complete and prompt to run the training script
 print("run train.py")

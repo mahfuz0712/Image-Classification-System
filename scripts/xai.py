@@ -1,3 +1,5 @@
+import os   # Importing the os module for handling file system and directory operations
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' # Setting TensorFlow environment variable to disable oneDNN optimizations
 import tensorflow as tf
 from tensorflow.keras.models import load_model # type: ignore
 import numpy as np
@@ -6,16 +8,17 @@ import cv2
 import shap
 from lime import lime_image
 from skimage.segmentation import mark_boundaries
-import os  # Importing the os module for handling file system and directory operations
 
-# Setting TensorFlow environment variable to disable oneDNN optimizations
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
+
+
 
 def ensure_model_built(model, dummy_input_shape=(1, 200, 200, 3)):
     """Ensures the model is built by calling it with dummy input."""
     if not model.built:
         dummy_input = np.zeros(dummy_input_shape, dtype=np.float32)
         model(dummy_input)  # Call the model to define input/output tensors
+        model.summary()  # Print model summary to confirm build
 
 def load_image(image_path, target_size):
     try:
@@ -58,6 +61,10 @@ def main():
         # Load the trained model
         model = load_model('../models/best.model.h5')
 
+        # Compile the model with a dummy optimizer and loss if not already compiled
+        if not model.compiled_loss:
+            model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
+
         ensure_model_built(model)
 
         # Path to the input image
@@ -65,7 +72,7 @@ def main():
         original_img, processed_img = load_image(image_path, target_size=(200, 200))
 
         if processed_img is None:
-            print("\033[91mXAI cannot process on this system. Please use a higher-end configuration.\033[0m")
+            print("\033[91mXAI cannot process on this system or google colab. Please use a higher-end configuration.\033[0m")
             return
 
         # Generate Grad-CAM heatmap
@@ -73,10 +80,33 @@ def main():
         heatmap = grad_cam(model, processed_img, layer_name)
 
         if heatmap is None:
-            print("\033[91mXAI cannot process on this system. Please use a a device with higher-end configuration.\033[0m")
+            print("\033[91mXAI cannot process on this system or google colab. Please use a a device with higher-end configuration.\033[0m")
             return
 
-        # ... (rest of your code for overlaying heatmap, SHAP, LIME, etc.)
+        # Overlay the heatmap on the original image
+        heatmap = cv2.resize(heatmap, (original_img.shape[1], original_img.shape[0]))
+        heatmap = np.uint8(255 * heatmap)
+        heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+        superimposed_img = cv2.addWeighted(original_img, 0.6, heatmap, 0.4, 0)
+
+        # Display the original image, heatmap, and superimposed image
+        plt.figure(figsize=(12, 6))
+        plt.subplot(1, 3, 1)
+        plt.imshow(cv2.cvtColor(original_img, cv2.COLOR_BGR2RGB))
+        plt.title('Original Image')
+        plt.axis('off')
+
+        plt.subplot(1, 3, 2)
+        plt.imshow(heatmap)
+        plt.title('Grad-CAM Heatmap')
+        plt.axis('off')
+
+        plt.subplot(1, 3, 3)
+        plt.imshow(cv2.cvtColor(superimposed_img, cv2.COLOR_BGR2RGB))
+        plt.title('Superimposed Image')
+        plt.axis('off')
+
+        plt.show()
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         print("\033[91mXAI cannot process on this system or Google Colab. Please use a device with higher-end configuration.\033[0m")
