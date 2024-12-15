@@ -1,5 +1,3 @@
-import os   # Importing the os module for handling file system and directory operations
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' # Setting TensorFlow environment variable to disable oneDNN optimizations
 import tensorflow as tf
 from tensorflow.keras.models import load_model # type: ignore
 import numpy as np
@@ -76,7 +74,7 @@ def main():
             return
 
         # Generate Grad-CAM heatmap
-        layer_name = "conv2d_2"  # Update this based on your model's summary
+        layer_name = "conv2d_1"  # Update this based on your model's summary
         heatmap = grad_cam(model, processed_img, layer_name)
 
         if heatmap is None:

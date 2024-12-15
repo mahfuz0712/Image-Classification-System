@@ -1,5 +1,9 @@
 # Image Classification System
 =====================Project Directory Struncture=====================
+## Project Overview
+This project involves training a binary image classification model using convolutional neural networks (CNNs) and implementing Explainable AI (XAI) techniques to interpret the model's predictions. The trained model identifies images belonging to two classes and provides visual explanations using Grad-CAM and LIME.
+
+
 #### Step-1: Organize your project directory like this:
 ```
 image_classification_system/
@@ -10,33 +14,41 @@ image_classification_system/
 │   │   │   ├── sick_child1.jpg
 │   │   │   ├── sick_child2.jpg
 │   │   │   └── ...
-│   │   └── congenital_disorder_part_two/
+│   │   ├── healthy/
+│   │   │   ├── healthy_child1.jpg
+│   │   │   ├── healthy_child2.jpg
+│   │   │   └── ...
 │   ├── augmented_data/
-│   │   ├── congenital_disorder_part_one/
+│   │   ├── congenital_disorder/
 │   │   │   ├── sick_child1.jpg
 │   │   │   ├── sick_child2.jpg
 │   │   │   └── ...
-│   │   └── congenital_disorder_part_two/
+│   │   ├── healthy/
+│   │   │   ├── healthy_child1.jpg
+│   │   │   ├── healthy_child2.jpg
+│   │   │   └── ...
 │   ├── validation/
-│       ├── congenital_disorder_part_one/
+│       ├── congenital_disorder/
 │       │   ├── sick_child1.jpg
 │       │   ├── sick_child2.jpg
 │       │   └── ...
-│       |── congenital_disorder_part_two/
+│       ├── healthy/
+│       │   ├── healthy_child1.jpg
+│       │   ├── healthy_child2.jpg
+│       │   └── ...
 │
 ├── models/
 │   └── best.model.h5 // this will be generated after you run train.py
 │
 ├── scripts/
 │   ├── augment.py
-|   |── evaluate.py
-│   ├── summary.py
-│   ├── train.py
+|   |── train.py
+│   ├── evaluate.py
 │   └── xai.py
 │
 ├── requirements.txt
 ├── README.md
-└── .gitignore
+
 ```
 #### Step-2: Set Up Your Virtual Environment
 ##### 1.  Create a virtual environment (optional but recommended):
@@ -68,60 +80,6 @@ python train.py
 ```
 This script will train the model using the augmented_data and validation data and generate  the best.mode.h5 with accuracy of 90% and above 
 
-#### Step-5: Generate Classification Report
-##### 1. Run the evaluate.py script to see the report
-```
-python evaluate.py
-```
-This script will load the trained model and make classification repornt on the on the images present at the validation path.
-
-
-
-# Explainable AI Project: Binary Image Classification with Grad-CAM and LIME
-
-## Project Overview
-This project involves training a binary image classification model using convolutional neural networks (CNNs) and implementing Explainable AI (XAI) techniques to interpret the model's predictions. The trained model identifies images belonging to two classes and provides visual explanations using Grad-CAM and LIME.
-
----
-
-## Project Structure
-```
-├── datasets/
-│   ├── augmented_data/          # Training dataset
-│   ├── validation/              # Validation dataset
-├── models/
-│   ├── best.model.h5            # Trained Keras model
-├── scripts/
-│   ├── train.py                 # Training the model
-│   ├── evaluate.py              # Model evaluation
-│   ├── xai.py                   # Grad-CAM implementation
-│   ├── xai.py                   # LIME implementation
-├── outputs/
-│   ├── gradcam_heatmap.png      # Grad-CAM output
-│   ├── lime_explanation.png     # LIME output
-├── EXPLAIN.md                   # Project documentation
-```
-
----
-
-## Requirements
-Ensure the following libraries are installed before running the scripts:
-- TensorFlow
-- NumPy
-- Matplotlib
-- scikit-image
-- LIME (for local interpretable model explanations)
-- scikit-learn
-
-Install all dependencies with:
-```bash
-pip install tensorflow numpy matplotlib scikit-learn lime
-```
-
----
-
-## Scripts Explanation
-
 ### `train.py`
 - **Purpose:** Trains a binary image classification model using a CNN.
 - **Key Steps:**
@@ -131,6 +89,15 @@ pip install tensorflow numpy matplotlib scikit-learn lime
   4. Implements early stopping to avoid overfitting.
   5. Saves the best-performing model as `best.model.h5`.
 
+
+
+#### Step-5: Generate Classification Report
+##### 1. Run the evaluate.py script to see the report
+```
+python evaluate.py
+```
+This script will load the trained model and make classification repornt on the on the images present at the validation path.
+
 ### `evaluate.py`
 - **Purpose:** Evaluates the model on validation data.
 - **Key Steps:**
@@ -138,6 +105,9 @@ pip install tensorflow numpy matplotlib scikit-learn lime
   2. Prepares validation data for evaluation.
   3. Calculates loss, accuracy, precision, recall, F1-score, ROC-AUC, and Precision-Recall AUC.
   4. Outputs a classification report and metrics.
+
+
+# Explainable AI : Binary Image Classification with Grad-CAM and LIME
 
 ### `xai.py`
 - **Purpose:** Generates visual explanations using Grad-CAM.
@@ -150,22 +120,6 @@ pip install tensorflow numpy matplotlib scikit-learn lime
 
 ---
 
-## How to Run
-
-### 1. Train the Model
-Run the training script to create a binary image classifier:
-```bash
-python scripts/train.py
-```
-This will save the trained model in the `models/` directory.
-
-### 2. Evaluate the Model
-Evaluate the model's performance on the validation dataset:
-```bash
-python scripts/evaluate.py
-```
-This will print evaluation metrics and save a classification report.
-
 ### 3. Explain Predictions
 #### Grad-CAM Explanation
 Run the Grad-CAM script to generate heatmaps for predictions:
@@ -173,7 +127,6 @@ Run the Grad-CAM script to generate heatmaps for predictions:
 python scripts/xai.py
 ```
 The output heatmap will be saved as `outputs/gradcam_heatmap.png`.
-
 
 ---
 

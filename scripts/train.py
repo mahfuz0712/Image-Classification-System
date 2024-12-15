@@ -1,8 +1,3 @@
-import os  # Importing the os module for handling file system and directory operations
-
-# Setting TensorFlow environment variable to disable oneDNN optimizations
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
 import tensorflow as tf  # Importing TensorFlow for deep learning tasks
 # Importing necessary classes and functions from TensorFlow Keras for building and training models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator  # type: ignore # For image preprocessing and augmentation

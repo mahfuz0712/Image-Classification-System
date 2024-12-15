@@ -1,8 +1,4 @@
 import os  # Importing the os module for directory and environment variable management
-import shutil  # Importing shutil for file operations like copying files
-
-# Setting TensorFlow environment variable to disable oneDNN optimizations
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 # Importing necessary functions for image processing and augmentation from TensorFlow Keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array  # type: ignore
